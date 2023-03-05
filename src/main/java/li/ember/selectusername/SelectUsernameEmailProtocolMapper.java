@@ -11,9 +11,9 @@ import org.keycloak.representations.IDToken;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SelectUsernameProtocolMapper extends AbstractOIDCProtocolMapper implements OIDCAccessTokenMapper, OIDCIDTokenMapper, UserInfoTokenMapper {
+public class SelectUsernameEmailProtocolMapper extends AbstractOIDCProtocolMapper implements OIDCAccessTokenMapper, OIDCIDTokenMapper, UserInfoTokenMapper {
     private static final List<ProviderConfigProperty> configProperties = new ArrayList<>();
-    public static final String PROVIDER_ID = "select-username-oidc-mapper";
+    public static final String PROVIDER_ID = "select-username-email-oidc-mapper";
 
     static {
         // The builtin protocol mapper let the user define under which claim name (key)
@@ -26,7 +26,7 @@ public class SelectUsernameProtocolMapper extends AbstractOIDCProtocolMapper imp
         // this token mapper implements to decide which options to add to the config. So if this token
         // mapper should never be available for some sort of options, e.g. like the id token, just don't
         // implement the corresponding interface.
-        OIDCAttributeMapperHelper.addIncludeInTokensConfig(configProperties, SelectUsernameProtocolMapper.class);
+        OIDCAttributeMapperHelper.addIncludeInTokensConfig(configProperties, SelectUsernameEmailProtocolMapper.class);
     }
 
     @Override
@@ -41,12 +41,12 @@ public class SelectUsernameProtocolMapper extends AbstractOIDCProtocolMapper imp
 
     @Override
     public String getDisplayType() {
-        return "Select Username Mapper";
+        return "Select Username Mapper (Email)";
     }
 
     @Override
     public String getHelpText() {
-        return "Shows a dialog to select a username (from a configured users' attribute), which can later be used in protocol mappers to overwrite claims.";
+        return "Sets an email to the mapped username + suffix";
     }
 
     @Override
@@ -68,6 +68,7 @@ public class SelectUsernameProtocolMapper extends AbstractOIDCProtocolMapper imp
         } else {
             username = userSession.getNote("selected_username");
         }
-        OIDCAttributeMapperHelper.mapClaim(token, mappingModel, username);
+	String email = username + "@gulas.ch";
+        OIDCAttributeMapperHelper.mapClaim(token, mappingModel, email);
     }
 }
