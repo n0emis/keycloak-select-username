@@ -39,9 +39,15 @@ public class SelectUsernameAuthenticator implements AuthenticatorFactory, Authen
         List<String> usernames = getValidUsernames(context);
 
         if (usernames.size() == 0) {
-            context.success();
+            context.failure(AuthenticationFlowError.ACCESS_DENIED);
             return;
         }
+
+	if (usernames.size() == 1) {
+	    context.getAuthenticationSession().setUserSessionNote("selected_username", usernames.get(0));
+	    context.success();
+	    return;
+	}
 
         Response challenge = context.form()
                 .setAttribute("usernames", usernames)
